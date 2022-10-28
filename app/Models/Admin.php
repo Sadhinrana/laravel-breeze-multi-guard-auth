@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Notifications\AdminResetPasswordNotification;
+use App\Notifications\Admin\ResetPassword;
+use App\Notifications\Admin\VerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -36,15 +37,23 @@ class Admin extends Authenticatable
     ];
 
     /**
-     * Send a password reset notification to the user.
+     * Send the password reset link notification.
      *
-     * @param  string  $token
+     * @param $token
      * @return void
      */
     public function sendPasswordResetNotification($token)
     {
-        $url = url('admin/reset-password', $this->token);
+        $this->notify(new ResetPassword($token));
+    }
 
-        $this->notify(new AdminResetPasswordNotification($url));
+    /**
+     * Send the email verification notification.
+     *
+     * @return void
+     */
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new VerifyEmail);
     }
 }
